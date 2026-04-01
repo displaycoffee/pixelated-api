@@ -1,0 +1,10 @@
+.DS_Store
+.env
+.env.answers
+.env.dev
+.env.production
+.husky
+.vscode/
+coverage/
+node_modules/
+dist/
