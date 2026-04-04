@@ -33,6 +33,24 @@ app.post('/validate', (request: Request, response: Response) => {
 	});
 });
 
+/* Get hint for question */
+app.post('/hints', (request: Request, response: Response) => {
+	const { hintId } = request.body;
+
+	// 1. Look up the hint in our secret object
+	const hint = variables.hints[hintId];
+
+	// 2. Handle missing hint gracefully
+	if (!hint) {
+		return response.status(404).json({ error: 'Hint not found' });
+	}
+
+	// 3. Send back hint
+	response.json({
+		message: hint,
+	});
+});
+
 /* HEY! LISTEN!! */
 app.listen(variables.port, () => {
 	console.log(`🏃 Running in ${variables.environment} mode`);

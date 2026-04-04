@@ -10,9 +10,9 @@
 	"homepage": "https://pixelated-api.display.coffee",
 	"scripts": {
 		"build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outfile=dist/index.js --format=esm",
-		"dev": "tsx watch --env-file=.env --env-file=.env.answers src/index.ts",
+		"dev": "tsx watch --env-file=.env --env-file=.env.answers --env-file=.env.hints src/index.ts",
 		"format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-		"start": "node --env-file=.env --env-file=.env.answers dist/index.js"
+		"start": "node --env-file=.env --env-file=.env.answers --env-file=.env.hints dist/index.js"
 	},
 	"devDependencies": {
 		"@types/cors": "^2.8.19",

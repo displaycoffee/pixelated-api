@@ -1,5 +1,5 @@
 /* Check if environment variables are available */
-const requiredEnvs = ['API_URL', 'ANSWERS'] as const;
+const requiredEnvs = ['API_URL', 'ANSWERS', 'HINTS'] as const;
 
 for (const env of requiredEnvs) {
 	if (!process.env[env]) {
@@ -17,9 +17,19 @@ try {
 	process.exit(1);
 }
 
+/* Attempt to parse hints */
+let parsedHints = {};
+try {
+	parsedHints = JSON.parse(process.env.HINTS!);
+} catch (e) {
+	console.error('❌ HINTS is not valid JSON. Check your .env.hints file.');
+	process.exit(1);
+}
+
 /* This config contains variables to use through application */
 export const variables = {
 	answers: parsedAnswers as AnswersType,
+	hints: parsedHints as HintsType,
 	environment: process.env.NODE_ENV as 'development' | 'production',
 	port: parseInt(process.env.PORT!, 10) as number,
 	url: process.env.API_URL! as string,
