@@ -1,8 +1,6 @@
 .DS_Store
 .env
-.env.answers
 .env.dev
-.env.hints
 .env.production
 .husky
 .vscode/

@@ -1,5 +1,9 @@
+/* Packages */
+import dotenv from 'dotenv';
+dotenv.config();
+
 /* Check if environment variables are available */
-const requiredEnvs = ['API_URL', 'ANSWERS', 'HINTS'] as const;
+const requiredEnvs = ['API_URL', 'CORS_ORIGIN', 'DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as const;
 
 for (const env of requiredEnvs) {
 	if (!process.env[env]) {
@@ -8,28 +12,16 @@ for (const env of requiredEnvs) {
 	}
 }
 
-/* Attempt to parse answers */
-let parsedAnswers = {};
-try {
-	parsedAnswers = JSON.parse(process.env.ANSWERS!);
-} catch (e) {
-	console.error('❌ ANSWERS is not valid JSON. Check your .env.answers file.');
-	process.exit(1);
-}
-
-/* Attempt to parse hints */
-let parsedHints = {};
-try {
-	parsedHints = JSON.parse(process.env.HINTS!);
-} catch (e) {
-	console.error('❌ HINTS is not valid JSON. Check your .env.hints file.');
-	process.exit(1);
-}
-
 /* This config contains variables to use through application */
 export const variables = {
-	answers: parsedAnswers as AnswersType,
-	hints: parsedHints as HintsType,
+	db: {
+		host: process.env.DB_HOST! as string,
+		port: parseInt(process.env.DB_PORT!, 10) as number,
+		user: process.env.DB_USER! as string,
+		password: process.env.DB_PASSWORD! as string,
+		name: process.env.DB_NAME! as string,
+	},
+	corsOrigin: process.env.CORS_ORIGIN! as string,
 	environment: process.env.NODE_ENV as 'development' | 'production',
 	port: parseInt(process.env.PORT!, 10) as number,
 	url: process.env.API_URL! as string,
