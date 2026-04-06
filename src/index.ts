@@ -18,15 +18,18 @@ app.use(express.json());
 
 /* Validate incoming guess */
 app.post('/validate', async (request: Request, response: Response) => {
-	const { questionId, guess } = request.body;
+	const { category, subCategory, questionId, guess } = request.body;
 
-	if (!questionId || !guess) {
+	if (!category || !subCategory || !questionId || !guess) {
 		return response.status(400).json({ error: 'Missing required fields' });
 	}
 
 	try {
 		// 1. Look up the answer in the database
-		const [rows] = await pool.query<RowDataPacket[]>('SELECT answer FROM answers WHERE question_id = ?', [questionId]);
+		const [rows] = await pool.query<RowDataPacket[]>(
+			'SELECT answer FROM answers WHERE category = ? AND sub_category = ? AND question_id = ?',
+			[category, subCategory, questionId],
+		);
 
 		// 2. Handle missing questions gracefully
 		if (rows.length === 0) {
@@ -50,15 +53,18 @@ app.post('/validate', async (request: Request, response: Response) => {
 
 /* Get hint for question */
 app.post('/hints', async (request: Request, response: Response) => {
-	const { hintId } = request.body;
+	const { category, subCategory, questionId, hintId } = request.body;
 
-	if (!hintId) {
+	if (!category || !subCategory || !questionId || !hintId) {
 		return response.status(400).json({ error: 'Missing required fields' });
 	}
 
 	try {
 		// 1. Look up the hint in the database
-		const [rows] = await pool.query<RowDataPacket[]>('SELECT hint FROM hints WHERE hint_id = ?', [hintId]);
+		const [rows] = await pool.query<RowDataPacket[]>(
+			'SELECT hint FROM hints WHERE category = ? AND sub_category = ? AND question_id = ? AND hint_id = ?',
+			[category, subCategory, questionId, hintId],
+		);
 
 		// 2. Handle missing hint gracefully
 		if (rows.length === 0) {
