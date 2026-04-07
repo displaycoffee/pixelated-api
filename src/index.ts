@@ -17,7 +17,7 @@ app.use(cors({ origin: variables.corsOrigin }));
 app.use(express.json());
 
 /* Validate incoming guess */
-app.post('/validate', async (request: Request, response: Response) => {
+app.post('/answers', async (request: Request, response: Response) => {
 	const { category, subCategory, questionId, guess } = request.body;
 
 	if (!category || !subCategory || !questionId || !guess) {
@@ -26,27 +26,47 @@ app.post('/validate', async (request: Request, response: Response) => {
 
 	try {
 		// 1. Look up the answer in the database
-		const [rows] = await pool.query<RowDataPacket[]>(
-			'SELECT answer FROM answers WHERE category = ? AND sub_category = ? AND question_id = ?',
-			[category, subCategory, questionId],
-		);
+		const [rows] = await pool.query<RowDataPacket[]>('SELECT answer FROM answers WHERE category = ? AND sub_category = ? AND question_id = ?', [
+			category,
+			subCategory,
+			questionId,
+		]);
 
 		// 2. Handle missing questions gracefully
 		if (rows.length === 0) {
 			return response.status(404).json({ error: 'Question not found' });
 		}
 
-		// 3. Normalize strings (remove spaces, ignore casing)
-		const correctAnswer = rows[0].answer as string;
-		const isMatch = guess?.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+		// 3. Normalize strings (replace & with 'and', strip special characters, trim, lowercase)
+		const normalize = (value: string) =>
+			value
+				.replace(/&/g, 'and')
+				.replace(/[^a-z0-9\s]/gi, '')
+				.toLowerCase()
+				.trim();
+		const normalizedGuess = normalize(guess);
+		const normalizedAnswer = normalize(rows[0].answer as string);
 
-		// 4. Send back success and message
+		// 4. Check for exact match or close match (guess found within answer or vice versa, minimum 4 characters)
+		const isMatch = normalizedGuess === normalizedAnswer;
+		const isClose = !isMatch && normalizedGuess.length >= 4 && (normalizedAnswer.includes(normalizedGuess) || normalizedGuess.includes(normalizedAnswer));
+
+		// 5. Set up message
+		let message = 'Try again!';
+		if (isMatch) {
+			message = 'Correct!';
+		} else if (isClose) {
+			message = 'Close!';
+		}
+
+		// 6. Send back success and message
 		response.json({
 			success: isMatch,
-			message: isMatch ? 'Correct!' : 'Try again!',
+			close: isClose,
+			message: message,
 		});
 	} catch (error) {
-		console.error('❌ /validate error:', error);
+		console.error('❌ /answers error:', error);
 		response.status(500).json({ error: 'Internal server error' });
 	}
 });
