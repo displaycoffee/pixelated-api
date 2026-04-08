@@ -23,6 +23,6 @@ export const variables = {
 	},
 	corsOrigin: process.env.CORS_ORIGIN! as string,
 	environment: process.env.NODE_ENV as 'development' | 'production',
-	port: parseInt(process.env.PORT!, 10) as number,
+	port: parseInt(process.env.PORT ?? '3001', 10) as number,
 	url: process.env.API_URL! as string,
 };

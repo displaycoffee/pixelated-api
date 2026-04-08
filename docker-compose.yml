@@ -2,8 +2,7 @@ services:
     api:
         build: .
         container_name: pixelated-api
-        ports:
-            - '${PORT:-3001}:${PORT:-3001}' # Defaults to 3001 if not set
+        network_mode: host
         env_file:
             - .env
         restart: always
