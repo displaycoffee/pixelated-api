@@ -11,8 +11,7 @@ import { pool } from './_config/scripts/db';
 /* Set Express app */
 const app = express();
 
-console.log('CORS origin:', variables.corsOrigin);
-
+/* Set CORS origin */
 app.use(cors({ origin: variables.corsOrigin }));
 app.use(express.json());
 
@@ -49,7 +48,8 @@ app.post('/answers', async (request: Request, response: Response) => {
 
 		// 4. Check for exact match or close match (guess found within answer or vice versa, minimum 4 characters)
 		const isMatch = normalizedGuess === normalizedAnswer;
-		const isClose = !isMatch && normalizedGuess.length >= 4 && (normalizedAnswer.includes(normalizedGuess) || normalizedGuess.includes(normalizedAnswer));
+		const isClose =
+			!isMatch && normalizedGuess.length >= 4 && (normalizedAnswer.includes(normalizedGuess) || normalizedGuess.includes(normalizedAnswer));
 
 		// 5. Set up message
 		let message = 'Try again!';
