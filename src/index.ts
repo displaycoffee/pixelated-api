@@ -17,7 +17,7 @@ app.use(express.json());
 
 /* Validate incoming guess */
 app.post('/answers', async (request: Request, response: Response) => {
-	const { category, subCategory, questionId, guess } = request.body;
+	const { category, subCategory, questionId, guess, guessNumber = 0 } = request.body;
 
 	if (!category || !subCategory || !questionId || !guess) {
 		return response.status(400).json({ error: 'Missing required fields' });
@@ -25,7 +25,7 @@ app.post('/answers', async (request: Request, response: Response) => {
 
 	try {
 		// 1. Look up the answer in the database
-		const [rows] = await pool.query<RowDataPacket[]>('SELECT answer FROM answers WHERE category = ? AND sub_category = ? AND question_id = ?', [
+		const [rows] = await pool.query<RowDataPacket[]>('SELECT answer, title, characters FROM answers WHERE category = ? AND sub_category = ? AND question_id = ?', [
 			category,
 			subCategory,
 			questionId,
@@ -59,11 +59,18 @@ app.post('/answers', async (request: Request, response: Response) => {
 			message = 'Close!';
 		}
 
-		// 6. Send back success and message
+		// 6. Reveal title and characters on correct answer or final guess
+		const reveal = isMatch || guessNumber >= 3;
+
+		// 7. Send back success and message
 		response.json({
 			success: isMatch,
 			close: isClose,
 			message: message,
+			...(reveal && {
+				title: rows[0].title as string,
+				characters: rows[0].characters as string,
+			}),
 		});
 	} catch (error) {
 		console.error('❌ /answers error:', error);
