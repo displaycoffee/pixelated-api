@@ -1,7 +1,7 @@
 /* Packages */
 import mysql from 'mysql2/promise';
 
-/* Local scripts */
+/* Scripts */
 import { variables } from './variables';
 
 /* Create and export connection pool */
