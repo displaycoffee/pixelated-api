@@ -4,7 +4,7 @@ import cors from 'cors';
 import type { Request, Response } from 'express';
 import type { RowDataPacket } from 'mysql2';
 
-/* Local scripts */
+/* Scripts */
 import { variables } from './_config/scripts/variables';
 import { pool } from './_config/scripts/db';
 
@@ -25,11 +25,10 @@ app.post('/answers', async (request: Request, response: Response) => {
 
 	try {
 		// 1. Look up the answer in the database
-		const [rows] = await pool.query<RowDataPacket[]>('SELECT answer, title, characters FROM answers WHERE category = ? AND sub_category = ? AND question_id = ?', [
-			category,
-			subCategory,
-			questionId,
-		]);
+		const [rows] = await pool.query<RowDataPacket[]>(
+			'SELECT answer, title, characters FROM answers WHERE category = ? AND sub_category = ? AND question_id = ?',
+			[category, subCategory, questionId],
+		);
 
 		// 2. Handle missing questions gracefully
 		if (rows.length === 0) {
