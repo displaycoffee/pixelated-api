@@ -5,8 +5,8 @@ import type { Request, Response } from 'express';
 import type { RowDataPacket } from 'mysql2';
 
 /* Scripts */
-import { variables } from './_config/scripts/variables';
-import { pool } from './_config/scripts/db';
+import { variables } from './_core/scripts/variables';
+import { pool } from './_core/scripts/db';
 
 /* Set Express app */
 const app = express();
