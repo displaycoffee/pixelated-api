@@ -8,7 +8,7 @@ type Hints = {
 };
 
 declare global {
-	/* Declare global types */
+	// Declare global types
 	type AnswersType = Answers;
 
 	type HintsType = Hints;
