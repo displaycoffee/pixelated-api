@@ -1,8 +1,8 @@
 /* Packages */
-import express from 'express';
-import cors from 'cors';
 import type { Request, Response } from 'express';
 import type { RowDataPacket } from 'mysql2';
+import express from 'express';
+import cors from 'cors';
 
 /* Scripts */
 import { variables } from './_core/scripts/variables';
@@ -19,9 +19,7 @@ app.use(express.json());
 app.post('/answers', async (request: Request, response: Response) => {
 	const { category, subCategory, questionId, guess, guessNumber = 0 } = request.body;
 
-	if (!category || !subCategory || !questionId || !guess) {
-		return response.status(400).json({ error: 'Missing required fields' });
-	}
+	if (!category || !subCategory || !questionId || !guess) return response.status(400).json({ error: 'Missing required fields' });
 
 	try {
 		// 1. Look up the answer in the database
@@ -81,9 +79,7 @@ app.post('/answers', async (request: Request, response: Response) => {
 app.post('/hints', async (request: Request, response: Response) => {
 	const { category, subCategory, questionId, hintId } = request.body;
 
-	if (!category || !subCategory || !questionId || !hintId) {
-		return response.status(400).json({ error: 'Missing required fields' });
-	}
+	if (!category || !subCategory || !questionId || !hintId) return response.status(400).json({ error: 'Missing required fields' });
 
 	try {
 		// 1. Look up the hint in the database
