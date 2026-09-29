@@ -2,7 +2,10 @@
 .env
 .env.dev
 .env.production
-.husky
+.astro/
+.claude/
+.husky/
+.tanstack/
 .vscode/
 coverage/
 node_modules/
