@@ -1,4 +1,4 @@
-/* Packagesaaa */
+/* Packages */
 import type { Request, Response } from 'express';
 import type { RowDataPacket } from 'mysql2';
 import express from 'express';
