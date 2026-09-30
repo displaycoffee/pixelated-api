@@ -11,8 +11,13 @@ import { pool } from './_core/scripts/db';
 /* Set Express app */
 const app = express();
 
-/* Set CORS origin */
-app.use(cors({ origin: variables.corsOrigin }));
+/* Set CORS origins (main site, Vercel production alias, and Vercel preview deployments) */
+const allowedOrigins = [
+	variables.corsOrigin,
+	'https://pixelated-opal.vercel.app',
+	/^https:\/\/pixelated-[a-z0-9-]+-adriammurphy-1709s-projects\.vercel\.app$/,
+];
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 /* Validate incoming guess */
